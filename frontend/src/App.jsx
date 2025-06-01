@@ -1,14 +1,22 @@
 // src/App.jsx
 import React from 'react';
-import FileUpload from './components/FileUpload';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import FileUpload from './pages/FileUpload';
+import Main from './pages/Main';  
+import ChartPage from './pages/Chart';
 
-function App() {
+
+const App = () => {
   return (
-    <div className="container mt-5">
-      <h1>📊 JavaWeb Profiler</h1>
-      <FileUpload />
-    </div>
+    <Router>
+
+      <Routes>
+        <Route path="/" element={<Main />} />         {/* ✅ 메인 페이지로 대체 */}
+        <Route path="/upload" element={<FileUpload />} />
+        <Route path="/chart" element={<ChartPage />} /> 
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
