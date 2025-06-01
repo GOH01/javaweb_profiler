@@ -8,8 +8,17 @@ const path = require('path');
 const { createDynamicTable, getTableList, sequelize, dropTable } = require('../models/index');
 const profile_model = require('../models/profile');
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname); // ← 원래 이름으로 저장
+    }
+  });
+
 // 엑셀 업로드를 위한 multer 설정
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: storage });
 
 // 엑셀 업로드 및 처리 라우터
 router.post('/uploadExcel', upload.single('file'), async (req, res) => {
