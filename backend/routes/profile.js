@@ -45,7 +45,7 @@ router.post('/uploadExcel', upload.single('file'), async (req, res) => {
     try {
         await createDynamicTable(merged, originalFileName);
         fs.unlinkSync(filePath);
-        res.json({ status: 'success', message: `파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
+        res.json({ tableName: $(originalFileName), status: 'success', message: `파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
     } catch (err) {
         fs.unlinkSync(filePath);
         res.status(500).json({ status: 'error', message: '테이블 저장 중 오류 발생.', error: err.message });
