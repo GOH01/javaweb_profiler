@@ -8,7 +8,7 @@ const Database = () => {
     );
 };
 
-export default function ChartPage() {
-    return <div className="p-5">📈 차트 페이지</div>;
+export default function DBPage() {
+    return <div className="p-5">📋 DB 목록 페이지</div>;
   }
   
