@@ -3,10 +3,10 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const FileUpload = () => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null); // ✅ 초기값 null로
   const [status, setStatus] = useState('');
-  const [analysis, setAnalysis] = useState(null);
-  const [viewType, setViewType] = useState('task');
+  const [analysis, setAnalysis] = useState([]); // ✅ 초기값 빈 배열
+  
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -20,44 +20,34 @@ const FileUpload = () => {
     formData.append('file', file);
 
     try {
-      const uploadRes = await axios.post('http://localhost:3001/api/profile/uploadExcel', formData);
+      // ✅ 업로드 요청
+      const uploadRes = await axios.post(
+        'http://localhost:3001/api/profile/uploadExcel',
+        formData
+      );
       setStatus('✅ 업로드 성공!');
       console.log(uploadRes.data);
 
-      const analyzeRes = await axios.get('http://localhost:5000/analyze');
-      setAnalysis(analyzeRes.data); // { task: {...}, core: {...} }
+      const tableName = uploadRes.data.table;
+    
+      if (!tableName) {
+        setStatus('❌ 테이블명이 응답에 없습니다.');
+        return;
+      }
+
+      // ✅ 분석 요청
+      const analyzeRes = await axios.get(
+        `http://localhost:3001/api/profile/analyze/${tableName}`
+      );
+      console.log('업로드 응답:', uploadRes.data);
+      console.log('테이블명:', tableName);
+      console.log('분석 결과:', analyzeRes.data);
+      setAnalysis(analyzeRes.data);
       console.log('분석 결과:', analyzeRes.data);
     } catch (err) {
       setStatus('❌ 업로드 실패...');
       console.error(err);
     }
-  };
-
-  const renderTable = (data) => {
-    if (!data) return null;
-
-    return (
-      <table className="table table-bordered mt-3">
-        <thead className="table-light">
-          <tr>
-            <th>이름</th>
-            <th>Min</th>
-            <th>Max</th>
-            <th>Avg</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(data).map(([key, value]) => (
-            <tr key={key}>
-              <td>{key}</td>
-              <td>{value.min}</td>
-              <td>{value.max}</td>
-              <td>{value.avg}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
   };
 
   return (
@@ -71,13 +61,15 @@ const FileUpload = () => {
     >
       <div
         className="shadow-lg p-5 bg-white rounded"
-        style={{ width: '100%', maxWidth: '700px' }}
+        style={{ width: '100%', maxWidth: '600px' }}
       >
         <h2 className="text-center mb-4 text-primary fw-bold">📊 JavaWeb Profiler</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="fileInput" className="form-label fw-semibold">데이터 파일 업로드</label>
+            <label htmlFor="fileInput" className="form-label fw-semibold">
+              데이터 파일 업로드
+            </label>
             <input
               type="file"
               name="file"
@@ -90,6 +82,18 @@ const FileUpload = () => {
           <button
             type="submit"
             className="btn btn-success w-100 py-2 fw-bold"
+            style={{
+              fontSize: '18px',
+              borderRadius: '10px',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+              transition: '0.2s',
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = '#218838')
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = '#28a745')
+            }
           >
             🚀 업로드
           </button>
@@ -101,29 +105,54 @@ const FileUpload = () => {
           </div>
         )}
 
-        {analysis && (
-          <div className="mt-5">
-            <div className="d-flex justify-content-center gap-3 mb-3">
-              <button
-                className={`btn ${viewType === 'task' ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => setViewType('task')}
-              >
-                📌 Task 기준 보기
-              </button>
-              <button
-                className={`btn ${viewType === 'core' ? 'btn-primary' : 'btn-outline-primary'}`}
-                onClick={() => setViewType('core')}
-              >
-                ⚙️ Core 기준 보기
-              </button>
-            </div>
+        {/* ✅ 분석 결과 출력: 배열이 비어있지 않을 때만 */}
+        {analysis.coreStats && analysis.coreStats.length > 0 && (
+  <div className="mt-5">
+    <h4 className="text-center mb-3 fw-semibold">🧠 Core 분석 결과</h4>
+    <table className="table table-bordered">
+      <thead className="table-secondary">
+        <tr>
+          {Object.keys(analysis.coreStats[0]).map((key, idx) => (
+            <th key={idx}>{key}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {analysis.coreStats.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            {Object.values(row).map((val, colIndex) => (
+              <td key={colIndex}>{val}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
 
-            <h5 className="text-center fw-semibold">
-              {viewType === 'task' ? '📋 Task별 분석 결과' : '🧠 Core별 분석 결과'}
-            </h5>
-            {renderTable(analysis[viewType])}
-          </div>
-        )}
+{analysis.taskStats && analysis.taskStats.length > 0 && (
+  <div className="mt-5">
+    <h4 className="text-center mb-3 fw-semibold">🧩 Task 분석 결과</h4>
+    <table className="table table-bordered">
+      <thead className="table-secondary">
+        <tr>
+          {Object.keys(analysis.taskStats[0]).map((key, idx) => (
+            <th key={idx}>{key}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {analysis.taskStats.map((row, rowIndex) => (
+          <tr key={rowIndex}>
+            {Object.values(row).map((val, colIndex) => (
+              <td key={colIndex}>{val}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
       </div>
     </div>
   );

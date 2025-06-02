@@ -45,7 +45,7 @@ router.post('/uploadExcel', upload.single('file'), async (req, res) => {
     try {
         await createDynamicTable(merged, originalFileName);
         fs.unlinkSync(filePath);
-        res.json({ tableName: $(originalFileName), status: 'success', message: `파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
+        res.json({ table:originalFileName, status: 'success', message: `파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
     } catch (err) {
         fs.unlinkSync(filePath);
         res.status(500).json({ status: 'error', message: '테이블 저장 중 오류 발생.', error: err.message });
@@ -135,10 +135,10 @@ router.get('/taskdata/:tableName/:task', async(req,res)=>{
     res.json(data);
 });
 
-// 1️⃣ 분석 API - 최근 테이블 기준 core/task 별 min/max/avg
+// 분석 API - 최근 테이블 기준 core/task 별 min/max/avg
 router.get('/analyze/:tableName', async (req, res) => {
   try {
-    const tableName = req.params;
+    const {tableName} = req.params;
     const tableList = await getTableList();
     if (tableList.length === 0) {
       return res.status(400).json({ message: '테이블이 없습니다.' });

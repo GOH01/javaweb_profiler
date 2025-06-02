@@ -33,7 +33,7 @@ export default function ChartPage() {
   const [viewType, setViewType] = useState('task'); // 'task' or 'core'
 
   useEffect(() => {
-    axios.get('http://localhost:3001/analyze')
+    axios.get(`http://localhost:3001/api/profile/analyze/${tableName}`)
       .then(res => {
         const rawData = res.data; // 예: { task1: [10,15,...], ... }
 
