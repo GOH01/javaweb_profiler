@@ -33,19 +33,25 @@ export default function ChartPage() {
   const [viewType, setViewType] = useState('task'); // 'task' or 'core'
 
   useEffect(() => {
+    const tableName = localStorage.getItem('uploadedTableName');
+  
+    if (!tableName) return;
+  
     axios.get(`http://localhost:3001/api/profile/analyze/${tableName}`)
-      .then(res => {
-        const rawData = res.data; // 예: { task1: [10,15,...], ... }
+      .then((res) => {
+        const rawData = res.data;
+        const keySet = viewType === 'task' ? rawData.taskStats : rawData.coreStats;
 
-        // key: task1~5 또는 core1~5
-        const labels = Object.keys(rawData);
-        const minData = labels.map(key => Math.min(...rawData[key]));
-        const maxData = labels.map(key => Math.max(...rawData[key]));
-        const avgData = labels.map(key => {
-          const arr = rawData[key];
-          return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
-        });
+      if (!keySet || !Array.isArray(keySet)) return;
 
+      const labels = keySet.map(row => row.task || row.name || row.core);
+      const minData = keySet.map(row => Number(row.min_usaged));
+      const maxData = keySet.map(row => Number(row.max_usaged));
+      const avgData = keySet.map(row => Number(row.avg_usaged));
+
+
+
+  
         setChartData({
           labels,
           datasets: [
@@ -55,18 +61,35 @@ export default function ChartPage() {
           ]
         });
       })
-      .catch(err => console.error('분석 데이터를 불러오지 못했습니다:', err));
+      .catch((err) => {
+        console.error('❌ 분석 데이터 불러오기 실패:', err);
+      });
   }, [viewType]);
+  
 
   return (
     <Layout>
       <div className="container py-5">
         <h2 className="mb-4 fw-bold text-center">📈 분석 차트</h2>
 
-        <div className="d-flex justify-content-center gap-3 mb-5">
-          <button className={`btn ${viewType === 'task' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setViewType('task')}>Task 기준 보기</button>
-          <button className={`btn ${viewType === 'core' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setViewType('core')}>Core 기준 보기</button>
+        <div className="d-flex justify-content-center gap-3 mb-4">
+          <button
+            className={`btn ${viewType === 'task' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setViewType('task')}
+          >
+            Task 기준 보기
+          </button>
+          <button
+            className={`btn ${viewType === 'core' ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setViewType('core')}
+          >
+            Core 기준 보기
+          </button>
         </div>
+
+        {!localStorage.getItem('uploadedTableName') && (
+          <p className="text-center text-danger">❗ 먼저 FileUpload에서 데이터를 업로드하세요</p>
+        )}
 
         {chartData ? (
           <>
@@ -88,7 +111,7 @@ export default function ChartPage() {
             </div>
           </>
         ) : (
-          <p className="text-center">📡 분석 결과를 불러오는 중...</p>
+          <p className="text-center text-muted">🕊 분석 데이터를 불러오는 중...</p>
         )}
       </div>
     </Layout>
