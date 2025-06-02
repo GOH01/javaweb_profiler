@@ -19,7 +19,7 @@ const FileUpload = () => {
     formData.append('file', file);
 
     try {
-      const uploadRes = await axios.post('http://localhost:5000/upload', formData);
+      const uploadRes = await axios.post('http://localhost:3001/api/profile/uploadExcel', formData);
       setStatus('✅ 업로드 성공!');
       console.log(uploadRes.data);
 

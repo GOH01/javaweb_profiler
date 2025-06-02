@@ -33,7 +33,7 @@ export default function ChartPage() {
   const [chartData, setChartData] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/analyze')
+    axios.get('http://localhost:3001/analyze')
       .then(res => {
         const data = res.data; // 예: { task1: {min: 1, max: 10, avg: 5}, ... }
 
