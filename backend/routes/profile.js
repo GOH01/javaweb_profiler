@@ -135,4 +135,48 @@ router.get('/taskdata/:tableName/:task', async(req,res)=>{
     res.json(data);
 });
 
+// 1️⃣ 분석 API - 최근 테이블 기준 core/task 별 min/max/avg
+router.get('/analyze/:tableName', async (req, res) => {
+  try {
+    const tableName = req.params;
+    const tableList = await getTableList();
+    if (tableList.length === 0) {
+      return res.status(400).json({ message: '테이블이 없습니다.' });
+    }
+ 
+    profile_model.initiate(sequelize, tableName);
+
+    // Core 기준 통계
+    const coreStats = await profile_model.findAll({
+      attributes: [
+        'core',
+        [sequelize.fn('MIN', sequelize.col('usaged')), 'min_usaged'],
+        [sequelize.fn('MAX', sequelize.col('usaged')), 'max_usaged'],
+        [sequelize.fn('AVG', sequelize.col('usaged')), 'avg_usaged']
+      ],
+      group: ['core']
+    });
+
+    // Task 기준 통계
+    const taskStats = await profile_model.findAll({
+      attributes: [
+        'task',
+        [sequelize.fn('MIN', sequelize.col('usaged')), 'min_usaged'],
+        [sequelize.fn('MAX', sequelize.col('usaged')), 'max_usaged'],
+        [sequelize.fn('AVG', sequelize.col('usaged')), 'avg_usaged']
+      ],
+      group: ['task']
+    });
+
+    res.json({
+      table: tableName,
+      coreStats,
+      taskStats
+    });
+  } catch (error) {
+    console.error('분석 중 오류:', error);
+    res.status(500).json({ message: '분석 중 오류 발생', error: error.message });
+  }
+});
+
 module.exports = router;
