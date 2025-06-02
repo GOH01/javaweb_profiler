@@ -1,14 +1,15 @@
 import React from 'react';
+import Layout from "../components/Layout";
+import Database from '../components/Database';
 
-const Database = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+const DatabasePage = () => {
+  return (
+    <div>
+      <Layout>
+        <Database />
+      </Layout>
+    </div>
+  );
 };
 
-export default function DBPage() {
-    return <div className="p-5">📋 DB 목록 페이지</div>;
-  }
-  
+export default DatabasePage;
