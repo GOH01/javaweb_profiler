@@ -1,6 +1,7 @@
 // src/pages/Chart.jsx
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import { Bar, Line, Radar, PolarArea } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -29,11 +30,13 @@ ChartJS.register(
 );
 
 export default function ChartPage() {
+  const location = useLocation();
   const [chartData, setChartData] = useState(null);
   const [viewType, setViewType] = useState('task'); // 'task' or 'core'
 
+  const tableName = location.state?.tableName || localStorage.getItem('uploadedTableName');
+
   useEffect(() => {
-    const tableName = localStorage.getItem('uploadedTableName');
   
     if (!tableName) return;
   

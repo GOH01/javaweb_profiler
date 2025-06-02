@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
         {children}
       </main>
       <footer className="text-center text-muted py-3 border-top">
-        Made by Team LeGend |  ❤️ We Love Kang ❤️   | GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer">프로젝트 링크</a>
+        Made by Team LeGend |  ❤️ We Love Kang ❤️   | GitHub: <a href="https://github.com/GOH01/javaweb_profiler.git" target="_blank" rel="noopener noreferrer">프로젝트 링크</a>
       </footer>
     </div>
   );

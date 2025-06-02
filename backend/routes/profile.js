@@ -58,33 +58,33 @@ router.get('/', async (req,res)=>{
     res.json(tableList);
 });
 
-// 해당 테이블 명을 가진 Table을 호출하는 부분이다.
-router.get('/data/:tableName', async (req,res)=>{
-    try{
-        const {tableName} = req.params;
-        const tableList = await getTableList();
+// // 해당 테이블 명을 가진 Table을 호출하는 부분이다.
+// router.get('/data/:tableName', async (req,res)=>{
+//     try{
+//         const {tableName} = req.params;
+//         const tableList = await getTableList();
 
-        if(!tableList.includes(tableName)){
-            return res.status(404).json({error:'존재하지 않는 파일입니다.'});
-        }
+//         if(!tableList.includes(tableName)){
+//             return res.status(404).json({error:'존재하지 않는 파일입니다.'});
+//         }
 
-        profile_model.initiate(sequelize, tableName);
+//         profile_model.initiate(sequelize, tableName);
 
-        const datas = await profile_model.findAll();
+//         const datas = await profile_model.findAll();
 
-        const tasks = await profile_model.findAll({
-            attributes: [sequelize.fn('DISTINCT', sequelize.col('core')), 'core'],
-        });
+//         const tasks = await profile_model.findAll({
+//             attributes: [sequelize.fn('DISTINCT', sequelize.col('core')), 'core'],
+//         });
 
-        const cores = await profile_model.findAll({
-            attributes: [sequelize.fn('DISTINCT', sequelize.col('task')), 'task'],
-        });
+//         const cores = await profile_model.findAll({
+//             attributes: [sequelize.fn('DISTINCT', sequelize.col('task')), 'task'],
+//         });
 
-        res.json({datas: datas, cores : cores, tasks : tasks});
-    }catch(error){
-        console.error('데이터 조회 오류', error);
-    }
-});
+//         res.json({datas: datas, cores : cores, tasks : tasks});
+//     }catch(error){
+//         console.error('데이터 조회 오류', error);
+//     }
+// });
 
 // 해당 테이블을 삭제하는 기능
 router.delete('/drop/:tableName', async(req,res)=>{
@@ -97,43 +97,43 @@ router.delete('/drop/:tableName', async(req,res)=>{
     }
 });
 
-// CORE 기준으로 TASK그래프 표기시 사용하는 데이터 가공처리
-router.get('/coredata/:tableName/:core', async(req,res)=>{
-    const { tableName, core } = req.params;
-    profile_model.initiate(sequelize, tableName);
+// // CORE 기준으로 TASK그래프 표기시 사용하는 데이터 가공처리
+// router.get('/coredata/:tableName/:core', async(req,res)=>{
+//     const { tableName, core } = req.params;
+//     profile_model.initiate(sequelize, tableName);
 
-    const data = await profile_model.findAll({
-        attributes: [
-          'task',
-          [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
-          [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
-          [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
-        ],
-        where: { core: core },
-        group: ['task']
-    });
+//     const data = await profile_model.findAll({
+//         attributes: [
+//           'task',
+//           [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
+//           [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
+//           [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
+//         ],
+//         where: { core: core },
+//         group: ['task']
+//     });
 
-    res.json(data);
-});
+//     res.json(data);
+// });
 
-// TASK 기준으로 CORE그래프 표기시 사용하는 데이터 가공처리
-router.get('/taskdata/:tableName/:task', async(req,res)=>{
-    const { tableName, task } = req.params;
-    profile_model.initiate(sequelize, tableName);
+// // TASK 기준으로 CORE그래프 표기시 사용하는 데이터 가공처리
+// router.get('/taskdata/:tableName/:task', async(req,res)=>{
+//     const { tableName, task } = req.params;
+//     profile_model.initiate(sequelize, tableName);
 
-    const data = await profile_model.findAll({
-        attributes: [
-          'core',
-          [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
-          [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
-          [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
-        ],
-        where: { task: task },
-        group: ['core']
-    });
+//     const data = await profile_model.findAll({
+//         attributes: [
+//           'core',
+//           [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
+//           [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
+//           [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
+//         ],
+//         where: { task: task },
+//         group: ['core']
+//     });
 
-    res.json(data);
-});
+//     res.json(data);
+// });
 
 // 분석 API - 최근 테이블 기준 core/task 별 min/max/avg
 router.get('/analyze/:tableName', async (req, res) => {

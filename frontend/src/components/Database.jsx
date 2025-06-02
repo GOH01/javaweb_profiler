@@ -34,16 +34,15 @@ const Database = ({ setChartData }) => {  // DataContext 대신 props로 받음
         }
     };
 
+
     const handleFileClick = async (tableName) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/profile/${tableName}/data`);
-            setChartData(response.data);  // props로 받은 함수 사용
-            navigate("/chart");
+          navigate('/chart', { state: { tableName } });
         } catch (err) {
-            console.error("파일 데이터 로딩 실패:", err);
-            alert("차트 데이터를 불러오지 못했습니다.");
+          console.error("페이지 이동 실패:", err);
+          alert("차트 페이지 이동에 실패했습니다.");
         }
-    };
+      };
 
     const styles = {
         container: {
@@ -89,6 +88,16 @@ const Database = ({ setChartData }) => {  // DataContext 대신 props로 받음
             marginLeft: "15px",
             cursor: "pointer",
         },
+        deleteButton: {
+            backgroundColor: "red",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "5px 10px",
+            cursor: "pointer",
+            fontSize: "14px",
+            fontWeight: "500",
+          }
     };
 
     return (
@@ -117,16 +126,16 @@ const Database = ({ setChartData }) => {  // DataContext 대신 props로 받음
                         >
                             <span style={styles.fileName}>{tableName}</span>
 
-                            <span
-                                style={styles.icon}
+                            <button
+                                style={styles.deleteButton}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handleDelete(tableName);
                                 }}
                                 title="삭제"
                             >
-                                ❌
-                            </span>
+                                삭제
+                            </button>
                         </li>
                     ))}
                 </ul>
