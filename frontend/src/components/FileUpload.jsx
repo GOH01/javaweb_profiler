@@ -39,9 +39,10 @@ const FileUpload = () => {
       const analyzeRes = await axios.get(
         `http://localhost:3001/api/profile/analyze/${tableName}`
       );
-      console.log('업로드 응답:', uploadRes.data);
-      console.log('테이블명:', tableName);
-      console.log('분석 결과:', analyzeRes.data);
+      
+      // ✅ LocalStorage에 저장
+      localStorage.setItem('uploadedTableName', tableName);
+      console.log('로컬스토리지에 저장됨:', tableName);
       setAnalysis(analyzeRes.data);
       console.log('분석 결과:', analyzeRes.data);
     } catch (err) {
