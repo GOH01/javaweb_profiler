@@ -67,7 +67,7 @@ const FileUpload = () => {
         <h2 className="text-center mb-4 text-primary fw-bold">📊 JavaWeb Profiler</h2>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-4" style={{textAlign: 'center'}}>
             <label htmlFor="fileInput" className="form-label fw-semibold">
               데이터 파일 업로드
             </label>
