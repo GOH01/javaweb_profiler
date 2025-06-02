@@ -5,7 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState('');
-  const [analysis, setAnalysis] = useState(null);  // 📊 분석 결과 상태 추가
+  const [analysis, setAnalysis] = useState(null);
+  const [viewType, setViewType] = useState('task');
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -23,14 +24,40 @@ const FileUpload = () => {
       setStatus('✅ 업로드 성공!');
       console.log(uploadRes.data);
 
-      // 📡 업로드 성공 후 분석 요청
       const analyzeRes = await axios.get('http://localhost:5000/analyze');
-      setAnalysis(analyzeRes.data);
+      setAnalysis(analyzeRes.data); // { task: {...}, core: {...} }
       console.log('분석 결과:', analyzeRes.data);
     } catch (err) {
       setStatus('❌ 업로드 실패...');
       console.error(err);
     }
+  };
+
+  const renderTable = (data) => {
+    if (!data) return null;
+
+    return (
+      <table className="table table-bordered mt-3">
+        <thead className="table-light">
+          <tr>
+            <th>이름</th>
+            <th>Min</th>
+            <th>Max</th>
+            <th>Avg</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(data).map(([key, value]) => (
+            <tr key={key}>
+              <td>{key}</td>
+              <td>{value.min}</td>
+              <td>{value.max}</td>
+              <td>{value.avg}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   };
 
   return (
@@ -44,7 +71,7 @@ const FileUpload = () => {
     >
       <div
         className="shadow-lg p-5 bg-white rounded"
-        style={{ width: '100%', maxWidth: '600px' }}
+        style={{ width: '100%', maxWidth: '700px' }}
       >
         <h2 className="text-center mb-4 text-primary fw-bold">📊 JavaWeb Profiler</h2>
 
@@ -63,14 +90,6 @@ const FileUpload = () => {
           <button
             type="submit"
             className="btn btn-success w-100 py-2 fw-bold"
-            style={{
-              fontSize: '18px',
-              borderRadius: '10px',
-              boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-              transition: '0.2s',
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#218838'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#28a745'}
           >
             🚀 업로드
           </button>
@@ -84,25 +103,25 @@ const FileUpload = () => {
 
         {analysis && (
           <div className="mt-5">
-            <h4 className="text-center mb-3 fw-semibold">📈 분석 결과</h4>
-            <table className="table table-bordered">
-              <thead className="table-secondary">
-                <tr>
-                  {Object.keys(analysis[0]).map((key, idx) => (
-                    <th key={idx}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {analysis.map((row, rowIndex) => (
-                  <tr key={rowIndex}>
-                    {Object.values(row).map((val, colIndex) => (
-                      <td key={colIndex}>{val}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="d-flex justify-content-center gap-3 mb-3">
+              <button
+                className={`btn ${viewType === 'task' ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setViewType('task')}
+              >
+                📌 Task 기준 보기
+              </button>
+              <button
+                className={`btn ${viewType === 'core' ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => setViewType('core')}
+              >
+                ⚙️ Core 기준 보기
+              </button>
+            </div>
+
+            <h5 className="text-center fw-semibold">
+              {viewType === 'task' ? '📋 Task별 분석 결과' : '🧠 Core별 분석 결과'}
+            </h5>
+            {renderTable(analysis[viewType])}
           </div>
         )}
       </div>

@@ -3,16 +3,22 @@ import Header from './Header';
 
 const Layout = ({ children }) => {
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <Header />
-      <div style={{       minHeight: '100vh',
-      background: 'linear-gradient(to right, #f2f2f2, #d6e4ff)',
-      margin: 0,
-      padding: 0,
-}}>
+      <main
+        className="flex-grow-1"
+        style={{
+          background: 'linear-gradient(to right, #f2f2f2, #d6e4ff)',
+          padding: 0,
+          margin: 0,
+        }}
+      >
         {children}
-      </div>
-    </>
+      </main>
+      <footer className="text-center text-muted py-3 border-top">
+        Made by Team LeGend |  ❤️ We Love Kang ❤️   | GitHub: <a href="https://github.com" target="_blank" rel="noopener noreferrer">프로젝트 링크</a>
+      </footer>
+    </div>
   );
 };
 
