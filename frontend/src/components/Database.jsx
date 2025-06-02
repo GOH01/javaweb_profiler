@@ -10,7 +10,7 @@ const Database = ({ setChartData }) => {  // DataContext 대신 props로 받음
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                const response = await axios.get("http://localhost:3001/api/profile/");
+                const response = await axios.get("http://localhost:3001/api/profile");
                 setFiles(response.data);
             } catch (err) {
                 console.error("파일 목록 불러오기 실패:", err);
