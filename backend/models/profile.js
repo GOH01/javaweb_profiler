@@ -35,11 +35,11 @@ module.exports = {
   findAll: async (...args) => {
     if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
     return ProfileModel.findAll(...args);
-  }
+  },
 
-//   // 3️⃣ create 쿼리 메서드 (엑셀 데이터 삽입 등에서 사용됨)
-//   create: async (...args) => {
-//     if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
-//     return ProfileModel.create(...args);
-//   }
+  // 3️⃣ create 쿼리 메서드 (엑셀 데이터 삽입 등에서 사용됨)
+  create: async (...args) => {
+    if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
+    return ProfileModel.create(...args);
+  }
 };
