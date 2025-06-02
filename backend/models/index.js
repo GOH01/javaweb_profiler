@@ -67,8 +67,8 @@ async function createDynamicTable(profile, tableName) {
       if (!taskName || !core || usage === undefined || usage === null) continue;
 
       await DynamicModel.create({
-        task: String(taskName).trim(),
-        core: String(core).trim(),
+        task: taskName,
+        core: core,
         usaged: usage,
       });
     }
