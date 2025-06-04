@@ -27,7 +27,8 @@ const FileUpload = () => {
         formData
       );
       const { table, status, message } = uploadRes.data;
-      console.log(uploadRes.data);
+      console.log(status);
+      console.log(message);
       setMessage(message);
       setStatus(status);
 
@@ -48,8 +49,10 @@ const FileUpload = () => {
       setAnalysis(analyzeRes.data);
       console.log('분석 결과:', analyzeRes.data);
     } catch (err) {
-      setStatus('❌ 업로드 실패...');
-      console.error(err);
+      const backendMessage = err.response?.data?.message || '❌ 업로드 실패...';
+      const backendStatus = err.response?.data?.status || 'error';
+      setStatus(backendStatus);
+      setMessage(backendMessage); 
     }
   };
 
