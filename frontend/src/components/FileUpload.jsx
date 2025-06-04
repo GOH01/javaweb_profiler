@@ -25,8 +25,7 @@ const FileUpload = () => {
         'http://localhost:3001/api/profile/uploadExcel',
         formData
       );
-      setStatus('✅ 업로드 성공!');
-      console.log(uploadRes.data);
+      zz
 
       const tableName = uploadRes.data.table;
     
