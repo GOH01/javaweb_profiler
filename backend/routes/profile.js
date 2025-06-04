@@ -16,6 +16,7 @@ const storage = multer.diskStorage({
       cb(null, file.originalname); // ← 원래 이름으로 저장
     }
   });
+  
 
 // 엑셀 업로드를 위한 multer 설정
 const upload = multer({ storage: storage });
@@ -38,17 +39,17 @@ router.post('/uploadExcel', upload.single('file'), async (req, res) => {
     // 테이블 이름 중복 확인
     if (tableList.includes(originalFileName)) {
         fs.unlinkSync(filePath);
-        return res.json({ status: 'fail', message: '이미 존재하는 테이블 이름입니다.' });
+        return res.json({ status: 'fail', message: '❌ 이미 존재하는 테이블입니다.' });
     }
 
     // 테이블 생성 및 데이터 저장
     try {
         await createDynamicTable(merged, originalFileName);
         fs.unlinkSync(filePath);
-        res.json({ table:originalFileName, status: 'success', message: `파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
+        res.json({ table:originalFileName, status: 'success', message: `✅ 파일 '${originalFileName}'로 테이블이 저장되었습니다.` });
     } catch (err) {
         fs.unlinkSync(filePath);
-        res.status(500).json({ status: 'error', message: '테이블 저장 중 오류 발생.', error: err.message });
+        res.status(500).json({ status: 'error', message: '❌ 테이블 저장 중 오류 발생.', error: err.message });
     }
 });
 
@@ -58,33 +59,6 @@ router.get('/', async (req,res)=>{
     res.json(tableList);
 });
 
-// // 해당 테이블 명을 가진 Table을 호출하는 부분이다.
-// router.get('/data/:tableName', async (req,res)=>{
-//     try{
-//         const {tableName} = req.params;
-//         const tableList = await getTableList();
-
-//         if(!tableList.includes(tableName)){
-//             return res.status(404).json({error:'존재하지 않는 파일입니다.'});
-//         }
-
-//         profile_model.initiate(sequelize, tableName);
-
-//         const datas = await profile_model.findAll();
-
-//         const tasks = await profile_model.findAll({
-//             attributes: [sequelize.fn('DISTINCT', sequelize.col('core')), 'core'],
-//         });
-
-//         const cores = await profile_model.findAll({
-//             attributes: [sequelize.fn('DISTINCT', sequelize.col('task')), 'task'],
-//         });
-
-//         res.json({datas: datas, cores : cores, tasks : tasks});
-//     }catch(error){
-//         console.error('데이터 조회 오류', error);
-//     }
-// });
 
 // 해당 테이블을 삭제하는 기능
 router.delete('/drop/:tableName', async(req,res)=>{
@@ -97,43 +71,7 @@ router.delete('/drop/:tableName', async(req,res)=>{
     }
 });
 
-// // CORE 기준으로 TASK그래프 표기시 사용하는 데이터 가공처리
-// router.get('/coredata/:tableName/:core', async(req,res)=>{
-//     const { tableName, core } = req.params;
-//     profile_model.initiate(sequelize, tableName);
 
-//     const data = await profile_model.findAll({
-//         attributes: [
-//           'task',
-//           [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
-//           [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
-//           [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
-//         ],
-//         where: { core: core },
-//         group: ['task']
-//     });
-
-//     res.json(data);
-// });
-
-// // TASK 기준으로 CORE그래프 표기시 사용하는 데이터 가공처리
-// router.get('/taskdata/:tableName/:task', async(req,res)=>{
-//     const { tableName, task } = req.params;
-//     profile_model.initiate(sequelize, tableName);
-
-//     const data = await profile_model.findAll({
-//         attributes: [
-//           'core',
-//           [sequelize.fn('max', sequelize.col('usaged')), 'max_usaged'],
-//           [sequelize.fn('min', sequelize.col('usaged')), 'min_usaged'],
-//           [sequelize.fn('avg', sequelize.col('usaged')), 'avg_usaged']
-//         ],
-//         where: { task: task },
-//         group: ['core']
-//     });
-
-//     res.json(data);
-// });
 
 // 분석 API - 최근 테이블 기준 core/task 별 min/max/avg
 router.get('/analyze/:tableName', async (req, res) => {
