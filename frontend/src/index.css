@@ -6,7 +6,7 @@ body,html {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to right, #f2f2f2, #d6e4ff); /* ✅ 배경색 통일 */
+  background: linear-gradient(to right, #f2f2f2, #d6e4ff); /* 배경색 통일 */
 
 }
 

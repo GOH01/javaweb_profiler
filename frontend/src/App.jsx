@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Main />} />         {/* ✅ 메인 페이지로 대체 */}
+        <Route path="/" element={<Main />} />         {/* 메인 페이지로 대체 */}
         <Route path="/upload" element={<FileUpload />} />
         <Route path="/chart" element={<ChartPage />} /> 
         <Route path="/db" element={<Database/>}/>

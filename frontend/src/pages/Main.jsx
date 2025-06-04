@@ -15,9 +15,9 @@ const MainPage = () => {
         }}
       >
         <h1 className="fw-bold display-4 mb-3 text-dark">📊 JavaWeb Profiler</h1>
-        <p className="fs-5 text-muted mb-4" style={{ maxWidth: '720px' }}>
+        <p className="fs-5 text-muted mb-4" style={{ maxWidth: '740px' }}>
           이 웹 애플리케이션은 업로드된 데이터를 분석하여 <strong>Core</strong> 및 <strong>Task</strong> 기준으로 성능을 시각화하고,
-          DB에서 저장된 이력을 조회할 수 있는 <span className="text-primary fw-semibold">전문적인 프로파일링 도구</span>입니다.
+          DB에서 저장된 이력을 조회할 수 있는 <span className="text-primary fw-semibold">프로파일링 도구</span>입니다.
         </p>
 
         {/* 📦 기능 카드 섹션 */}
