@@ -26,14 +26,12 @@ const FileUpload = () => {
         'http://localhost:3001/api/profile/uploadExcel',
         formData
       );
-<<<<<<< HEAD
-      zz
-=======
+
       const { table, status, message } = uploadRes.data;
       console.log(uploadRes.data);
       setMessage(message);
       setStatus(status);
->>>>>>> d19337b069c18785cb0b968b99c2c51ad3202a90
+      
 
       if(status !== 'success'){
         return;
