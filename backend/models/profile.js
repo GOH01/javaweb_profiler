@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 let ProfileModel;
 
 module.exports = {
-  // 1️⃣ 동적으로 테이블 연결
+  // 동적으로 테이블 연결
   initiate: (sequelize, tableName) => {
     ProfileModel = sequelize.define(
       'Profile',
@@ -31,15 +31,9 @@ module.exports = {
     return ProfileModel;
   },
 
-  // 2️⃣ findAll 쿼리 메서드
+  // findAll 쿼리 메서드
   findAll: async (...args) => {
     if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
     return ProfileModel.findAll(...args);
   }
-
-//   // 3️⃣ create 쿼리 메서드 (엑셀 데이터 삽입 등에서 사용됨)
-//   create: async (...args) => {
-//     if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
-//     return ProfileModel.create(...args);
-//   }
 };

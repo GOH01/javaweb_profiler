@@ -3,9 +3,10 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const FileUpload = () => {
-  const [file, setFile] = useState(null); // ✅ 초기값 null로
+  const [file, setFile] = useState(null); // 초기값 null로
   const [status, setStatus] = useState('');
-  const [analysis, setAnalysis] = useState([]); // ✅ 초기값 빈 배열
+  const [message, setMessage] = useState('');
+  const [analysis, setAnalysis] = useState([]); // 초기값 빈 배열
   
 
   const handleFileChange = (e) => {
@@ -20,26 +21,32 @@ const FileUpload = () => {
     formData.append('file', file);
 
     try {
-      // ✅ 업로드 요청
+      // 업로드 요청
       const uploadRes = await axios.post(
         'http://localhost:3001/api/profile/uploadExcel',
         formData
       );
+<<<<<<< HEAD
       zz
+=======
+      const { table, status, message } = uploadRes.data;
+      console.log(uploadRes.data);
+      setMessage(message);
+      setStatus(status);
+>>>>>>> d19337b069c18785cb0b968b99c2c51ad3202a90
 
-      const tableName = uploadRes.data.table;
-    
-      if (!tableName) {
-        setStatus('❌ 테이블명이 응답에 없습니다.');
+      if(status !== 'success'){
         return;
       }
 
-      // ✅ 분석 요청
+      const tableName = uploadRes.data.table;
+
+      // 분석 요청
       const analyzeRes = await axios.get(
         `http://localhost:3001/api/profile/analyze/${tableName}`
       );
       
-      // ✅ LocalStorage에 저장
+      // LocalStorage에 저장
       localStorage.setItem('uploadedTableName', tableName);
       console.log('로컬스토리지에 저장됨:', tableName);
       setAnalysis(analyzeRes.data);
@@ -101,11 +108,11 @@ const FileUpload = () => {
 
         {status && (
           <div className="mt-4 alert alert-info text-center" style={{ fontSize: '16px' }}>
-            {status}
+            {message}
           </div>
         )}
 
-        {/* ✅ 분석 결과 출력: 배열이 비어있지 않을 때만 */}
+        {/* 분석 결과 출력: 배열이 비어있지 않을 때만 */}
         {analysis.coreStats && analysis.coreStats.length > 0 && (
   <div className="mt-5">
     <h4 className="text-center mb-3 fw-semibold">🧠 Core 분석 결과</h4>
