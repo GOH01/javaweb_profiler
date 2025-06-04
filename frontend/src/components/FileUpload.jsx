@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const FileUpload = () => {
   const [file, setFile] = useState(null); // ✅ 초기값 null로
   const [status, setStatus] = useState('');
+  const [message, setMessage] = useState('');
   const [analysis, setAnalysis] = useState([]); // ✅ 초기값 빈 배열
   
 
@@ -25,15 +26,15 @@ const FileUpload = () => {
         'http://localhost:3001/api/profile/uploadExcel',
         formData
       );
-      setStatus('✅ 업로드 성공!');
+      const { table, status, message } = uploadRes.data;
       console.log(uploadRes.data);
+      setMessage(message);
+      setStatus(status);
 
-      const tableName = uploadRes.data.table;
-    
-      if (!tableName) {
-        setStatus('❌ 테이블명이 응답에 없습니다.');
+      if(status !== 'success'){
         return;
       }
+      const tableName = uploadRes.data.table;
 
       // ✅ 분석 요청
       const analyzeRes = await axios.get(
@@ -102,7 +103,7 @@ const FileUpload = () => {
 
         {status && (
           <div className="mt-4 alert alert-info text-center" style={{ fontSize: '16px' }}>
-            {status}
+            {message}
           </div>
         )}
 
