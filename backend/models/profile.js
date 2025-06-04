@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 let ProfileModel;
 
 module.exports = {
-  // 1️⃣ 동적으로 테이블 연결
+  // 동적으로 테이블 연결
   initiate: (sequelize, tableName) => {
     ProfileModel = sequelize.define(
       'Profile',
@@ -31,7 +31,7 @@ module.exports = {
     return ProfileModel;
   },
 
-  // 2️⃣ findAll 쿼리 메서드
+  // findAll 쿼리 메서드
   findAll: async (...args) => {
     if (!ProfileModel) throw new Error('Model not initialized. Call initiate() first.');
     return ProfileModel.findAll(...args);
